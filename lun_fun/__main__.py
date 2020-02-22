@@ -8,10 +8,12 @@ def cli():
 
 def execute():
     mods = walk_modules("lun_fun")
+    print(mods)
     for mod in mods:
-        if 'exports' in mod.__dict__:
-            for com in mod.exports:
-                cli.add_command(com)
+        for attr in mod.__dict__:
+            attr = getattr(mod, attr)
+            if isinstance(attr, click.Command):
+                cli.add_command(attr)
     cli()
 
 if __name__ == "__main__":

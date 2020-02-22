@@ -51,5 +51,3 @@ class TestCase(unittest.TestCase):
         self.assertFalse(_validate(str2list('310101199909233767')))
         self.assertFalse(_validate(str2list('310101199909030564')))
         self.assertFalse(_validate(str2list('22010230030307517X')))
-
-exports = [idcard]

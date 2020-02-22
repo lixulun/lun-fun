@@ -9,7 +9,4 @@ def test(module_name):
     """
     测试指定模块
     """
-    tc = load_object("lun_fun." + module_name + ".TestCase")
     unittest.main(module="lun_fun." + module_name, argv=[sys.argv[0]])
-
-exports = [test]
