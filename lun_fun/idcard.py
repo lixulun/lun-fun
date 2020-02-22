@@ -1,7 +1,7 @@
 import click
 import numpy as np
-import pdb
 import unittest
+from . import main_commands
 
 def _validate(idn):
     """
@@ -19,7 +19,7 @@ def str2list(id_number):
         id_number[-1] = 10
     return list(map(int, id_number))
 
-@click.command()
+@main_commands.command()
 @click.argument('id_number')
 def idcard(id_number):
     """验证身份证号"""
@@ -28,7 +28,7 @@ def idcard(id_number):
     result = _validate(str2list(id_number))
     print(result)
 
-class TestCase(unittest.TestCase):
+class IdCardTest(unittest.TestCase):
 
     def test_function(self):
         self.assertTrue(_validate(str2list('110101199003070978')))
