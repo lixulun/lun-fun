@@ -10,7 +10,8 @@ bag_character = "!@#$%^&*-+_:;,.?"
 @main_commands.command()
 @click.option("--rule", default="Aa1!", help="组合规则 [A][a][1][!]")
 @click.option("--length", default=8, help="密码长度")
-def passwd(rule, length):
+@click.option("--quantity", default=1, help="数量")
+def passwd(rule, length, quantity):
     """
     生成密码
     """
@@ -27,6 +28,7 @@ def passwd(rule, length):
     if not population:
         population.extend(bag_upper)
         population.extend(bag_lower)
-    pwd = "".join(random.choices(population, k=length))
-    print(pwd)
-    return pwd
+
+    for _ in range(quantity):
+        pwd = "".join(random.choices(population, k=length))
+        print(pwd)
