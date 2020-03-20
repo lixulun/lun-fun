@@ -13,4 +13,4 @@ def test(module_name):
     mod_path = "lun_fun." + module_name
     if module_name == "*":
         mod_path = "lun_fun"
-    unittest.main(module=mod_path, argv=[sys.argv[0]])
+    unittest.main(module=mod_path, argv=[sys.argv[0], "-v"])
