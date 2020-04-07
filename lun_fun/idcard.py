@@ -1,12 +1,13 @@
 import click
-import numpy as np
 import unittest
 from . import main_commands
+from .misc import try_import
 
 def _validate(idn):
     """
     idn - ['int' * 18]  idn[-1] in [0~10]
     """
+    np = try_import("numpy")
     ratios = np.array([2**i%11 for i in range(18)][:0:-1])
     mapping = np.array([1, 0, 10, 9, 8, 7, 6, 5, 4, 3, 2])
     idn = np.array(idn)

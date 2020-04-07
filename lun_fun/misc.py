@@ -44,3 +44,13 @@ def walk_modules(path):
                 submod = import_module(fullpath)
                 mods.append(submod)
     return mods
+
+def try_import(path):
+    """
+    用来懒加载第三方模块
+    """
+    try:
+        mod = import_module(path)
+    except ModuleNotFoundError:
+        raise
+    return mod
