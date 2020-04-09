@@ -7,11 +7,9 @@ def _validate(idn):
     """
     idn - ['int' * 18]  idn[-1] in [0~10]
     """
-    np = try_import("numpy")
-    ratios = np.array([2**i%11 for i in range(18)][:0:-1])
-    mapping = np.array([1, 0, 10, 9, 8, 7, 6, 5, 4, 3, 2])
-    idn = np.array(idn)
-    m = (idn[:-1]*ratios).sum() % 11
+    ratios = [2**i%11 for i in range(18)][:0:-1]
+    mapping = [1, 0, 10, 9, 8, 7, 6, 5, 4, 3, 2]
+    m = sum([x*y for x, y in zip(idn[:-1], ratios)]) % 11
     return idn[-1] == mapping[m]
 
 def str2list(id_number):
