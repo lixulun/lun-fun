@@ -49,7 +49,7 @@ def read_line(f):
     return r
 
 def write():
-    with (pathlib.Path.home()/'journal.lixunote').open(encoding='utf8', mode='r') as f:
+    with (pathlib.Path.home()/'journal.lixunote').open(encoding='utf8', mode='a') as f:
         pass
     subprocess.run([get_editor(), str(pathlib.Path.home()/'journal.lixunote')])
 
