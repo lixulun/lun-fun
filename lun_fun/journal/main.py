@@ -4,7 +4,7 @@ import pathlib
 import subprocess
 import sys
 import os.path
-# from . import main_commands
+from .. import main_commands
 
 def get_conn():
     config = configparser.ConfigParser()
@@ -35,12 +35,12 @@ def get_editor():
     editor = config['journal'].get('editor')
     return editor
 
-# @main_commands.command()
+@main_commands.group()
 def journal():
     """
     记录日志
     """
-    cur = get_cursor()
+    pass
 
 def read_line(f):
     r = f.readline()
@@ -48,16 +48,26 @@ def read_line(f):
         r = f.readline()
     return r
 
+@journal.command()
 def write():
+    """
+    书写/修改未提交的日志
+    """
     with (pathlib.Path.home()/'journal.lixunote').open(encoding='utf8', mode='a') as f:
         pass
     subprocess.run([get_editor(), str(pathlib.Path.home()/'journal.lixunote')])
 
+@journal.command()
 def save():
+    """
+    保存至数据库
+    """
     ok = False
     with (pathlib.Path.home()/'journal.lixunote').open(encoding='utf8', mode='r') as f:
         category = read_line(f).strip()
         content = f.read().strip()
+        if not category or not content:
+            raise ValueError("Empty text is unacceptable.")
         rowcount =  run_sql("insert into journal(`date`, category, content) values(current_date(), %s, %s)", (category, content))
         if rowcount:
             ok = True
