@@ -12,7 +12,7 @@ def get_conn():
     host = config['journal'].get('host')
     port = config['journal'].getint('port')
     db = config['journal'].get('database')
-    user = config['journal'].get('database')
+    user = config['journal'].get('user')
     password = config['journal'].get('password')
 
     conn = MySQLdb.connect(host=host, port=port, db=db, user=user, passwd=password)
