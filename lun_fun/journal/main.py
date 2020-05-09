@@ -1,18 +1,11 @@
-import MySQLdb
-import configparser
 import pathlib
 import subprocess
-import sys
-import os.path
+import os
 from .. import main_commands
 from ..config import config
 from ..connection import make_mysql_connection
 
 path_journal = config['journal'].get('journal-path', pathlib.Path.home()/'journal.lixunote')
-
-def get_editor():
-    editor = config['journal'].get('editor')
-    return editor
 
 @main_commands.group()
 def journal():
@@ -34,7 +27,7 @@ def write():
     """
     with path_journal.open(encoding='utf8', mode='a') as f:
         pass
-    subprocess.run([get_editor(), str(path_journal)])
+    subprocess.run([config['journal'].get('editor'), str(path_journal)])
 
 def _save(conn):
     sql = """
@@ -63,11 +56,3 @@ def save():
     conn = make_mysql_connection(config['journal'])
     _save(conn)
     conn.close()
-
-if __name__ == '__main__':
-    if sys.argv[1] == 'write':
-        write()
-    elif sys.argv[1] == 'save':
-        conn = make_mysql_connection(config['journal'])
-        _save(conn)
-        conn.close()
