@@ -1,5 +1,4 @@
 import click
-import pprint
 from . import main_commands
 from .config import config
 from .connection import make_mysql_connection
@@ -40,6 +39,6 @@ def dictionary(key, value):
     if value:
         _set(conn, key, value)
     else:
-        for item in get(conn, key):
-            pprint.pprint(item)
+        from tabulate import tabulate
+        print(tabulate(get(conn, key), headers='keys'))
     conn.close()
