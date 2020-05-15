@@ -1,6 +1,7 @@
 import pathlib
 import subprocess
 import os
+import click
 from .. import main_commands
 from ..config import config
 from ..connection import make_mysql_connection
@@ -31,17 +32,18 @@ def write():
 
 def _save(conn):
     sql = """
-    INSERT INTO journal(`date`, category, content)
-    VALUES(current_date(), %s, %s)
+    INSERT INTO journal(`date`, category, title, content)
+    VALUES(current_date(), %s, %s, %s)
     """
     ok = False
     with path_journal.open(encoding='utf8', mode='r') as f:
         category = read_line(f).strip()
+        title = read_line(f).strip()
         content = f.read().strip()
         if not category or not content:
             raise ValueError("Empty text is unacceptable.")
         with conn.cursor() as cur:
-            cur.execute(sql, (category, content))
+            cur.execute(sql, (category, title, content))
             if cur.rowcount:
                 ok = True
     if ok:
@@ -78,4 +80,23 @@ def j_list():
     """
     conn = make_mysql_connection(config['journal'])
     _list(conn)
+    conn.close()
+
+@journal.command()
+@click.argument('_id')
+def read(_id):
+    """
+    阅读指定journal
+    """
+    sql = """
+    SELECT title, content, `date`
+    FROM journal
+    WHERE rowid=%s
+    """
+    conn = make_mysql_connection(config['journal'])
+    with conn.cursor() as cur:
+        cur.execute(sql, (_id,))
+        r = cur.fetchone()
+        print(f"《{r[0]}》", r[2], "\n")
+        print(r[1])
     conn.close()
