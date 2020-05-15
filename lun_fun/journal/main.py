@@ -56,3 +56,26 @@ def save():
     conn = make_mysql_connection(config['journal'])
     _save(conn)
     conn.close()
+
+def _list(conn):
+    sql = """
+    SELECT rowid, category, title, `date` 
+    FROM journal
+    """
+    from tabulate import tabulate
+    with conn.cursor() as cur:
+        cur.execute(sql)
+        res = []
+        cols = list(map(lambda x: x[0], cur.description))
+        for one in cur.fetchall():
+            res.append(dict(zip(cols, one)))
+        print(tabulate(res, headers='keys'))
+
+@journal.command(name='list')
+def j_list():
+    """
+    列出所有日志信息
+    """
+    conn = make_mysql_connection(config['journal'])
+    _list(conn)
+    conn.close()
