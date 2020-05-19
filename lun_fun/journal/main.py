@@ -28,7 +28,7 @@ def write():
     """
     with path_journal.open(encoding='utf8', mode='a') as f:
         pass
-    subprocess.run([config['journal'].get('editor'), str(path_journal)])
+    subprocess.run([config['journal'].get('editor', 'notepad'), str(path_journal)])
 
 def _save(conn):
     sql = """

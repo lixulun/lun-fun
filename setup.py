@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name="lun-fun",
     packages=['lun_fun'],
-    install_requires=['click', 'tabulate'],
+    install_requires=['click', 'mysqlclient', 'tabulate'],
     entry_points={
         "console_scripts": [
             "lun = lun_fun.__main__:execute"
