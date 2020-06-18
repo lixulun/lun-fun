@@ -2,6 +2,7 @@ import pathlib
 import subprocess
 import os
 import click
+import tkinter as tk
 from .. import main_commands
 from ..config import config
 from ..connection import make_mysql_connection
@@ -83,8 +84,9 @@ def j_list():
     conn.close()
 
 @journal.command()
+@click.option('--window/--text', default=True, help="显示模式")
 @click.argument('_id')
-def read(_id):
+def read(_id, window):
     """
     阅读指定journal
     """
@@ -97,6 +99,25 @@ def read(_id):
     with conn.cursor() as cur:
         cur.execute(sql, (_id,))
         r = cur.fetchone()
-        print(f"《{r[0]}》", r[2], "\n")
-        print(r[1])
+        title = r[0]
+        date = r[2]
+        text = r[1]
+        if window:
+            root = tk.Tk()
+            root.title(title + " - " + str(date))
+            root.geometry('500x600')
+            app = Reader(root, text)
+            app.mainloop()
+        else:
+            print(f"《{r[0]}》", r[2], "\n")
+            print(r[1])
     conn.close()
+
+class Reader(tk.Text):
+    def __init__(self, master=None, text=''):
+        super().__init__(master)
+        self.master = master
+        master.columnconfigure(0, weight=1)
+        master.rowconfigure(0, weight=1)
+        self.insert("1.0", text)
+        self.grid(column=0, row=0, sticky=(tk.W, tk.S, tk.N, tk.E))
