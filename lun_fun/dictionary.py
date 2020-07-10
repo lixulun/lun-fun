@@ -21,12 +21,25 @@ def get(conn, key):
 
 
 def _set(conn, key, value):
-    sql = """
+    insert_sql = """
     INSERT INTO dictionary(`key`, `value`)
     VALUES(%s, %s)
     """
+    update_sql = """
+    UPDATE dictionary set `value`=%s
+    WHERE `key` LIKE %s
+    """
+    query_sql = """
+    SELECT `key`
+    FROM dictionary
+    WHERE `key` LIKE %s
+    """
     with conn.cursor() as cur:
-        cur.execute(sql, (key, value))
+        cur.execute(query_sql, (key,))
+        if cur.fetchone():
+            cur.execute(update_sql, (value, key))
+        else:
+            cur.execute(insert_sql, (key, value))
 
 @main_commands.command()
 @click.argument('key')
