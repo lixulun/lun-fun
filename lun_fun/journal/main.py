@@ -5,7 +5,7 @@ import click
 import tkinter as tk
 from .. import main_commands
 from ..config import config
-from ..connection import make_mysql_connection
+from ..connection import get_connection
 
 path_journal = config['journal'].get('journal-path', pathlib.Path.home()/'journal.lixunote')
 
@@ -56,9 +56,8 @@ def save():
     """
     保存至数据库
     """
-    conn = make_mysql_connection(config['journal'])
-    _save(conn)
-    conn.close()
+    with get_connection('journal') as conn:
+        _save(conn)
 
 def _list(conn):
     sql = """
@@ -79,9 +78,8 @@ def j_list():
     """
     列出所有日志信息
     """
-    conn = make_mysql_connection(config['journal'])
-    _list(conn)
-    conn.close()
+    with get_connection('journal') as conn:
+        _list(conn)
 
 @journal.command()
 @click.option('--window/--text', default=True, help="显示模式")
@@ -95,23 +93,22 @@ def read(_id, window):
     FROM journal
     WHERE rowid=%s
     """
-    conn = make_mysql_connection(config['journal'])
-    with conn.cursor() as cur:
-        cur.execute(sql, (_id,))
-        r = cur.fetchone()
-        title = r[0]
-        date = r[2]
-        text = r[1]
-        if window:
-            root = tk.Tk()
-            root.title(title + " - " + str(date))
-            root.geometry('500x600')
-            app = Reader(root, text)
-            app.mainloop()
-        else:
-            print(f"《{r[0]}》", r[2], "\n")
-            print(r[1])
-    conn.close()
+    with get_connection('journal') as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql, (_id,))
+            r = cur.fetchone()
+            title = r[0]
+            date = r[2]
+            text = r[1]
+            if window:
+                root = tk.Tk()
+                root.title(title + " - " + str(date))
+                root.geometry('500x600')
+                app = Reader(root, text)
+                app.mainloop()
+            else:
+                print(f"《{r[0]}》", r[2], "\n")
+                print(r[1])
 
 class Reader(tk.Text):
     def __init__(self, master=None, text=''):

@@ -1,7 +1,7 @@
 import click
 from . import main_commands
 from .config import config
-from .connection import make_mysql_connection
+from .connection import get_connection
 
 def get(conn, key):
     sql = """
@@ -48,10 +48,9 @@ def dictionary(key, value):
     """
     存储/检索
     """
-    conn = make_mysql_connection(config['dictionary'])
-    if value:
-        _set(conn, key, value)
-    else:
-        from tabulate import tabulate
-        print(tabulate(get(conn, key), headers='keys'))
-    conn.close()
+    with get_connection('dictionary') as conn:
+        if value:
+            _set(conn, key, value)
+        else:
+            from tabulate import tabulate
+            print(tabulate(get(conn, key), headers='keys'))
