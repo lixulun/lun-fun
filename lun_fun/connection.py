@@ -16,6 +16,9 @@ def make_mysql_connection(config):
 class Connection():
 
     def __init__(self, ssh_username, ssh_private_key_password, database, username, password):
+    	"""
+    	SSH隧道相当于VPN
+    	"""
         self.server = SSHTunnelForwarder(
             'lixulun.top',
             ssh_username=ssh_username,
